@@ -4,9 +4,9 @@
 
 <instance-profile id="o"
                  name="OutOfTheHole"
-                 start-page="starter-topic.md">
+                 start-page="introduction.md">
 
-    <toc-element topic="starter-topic.md"/>
+    <toc-element topic="introduction.md"/>
     <toc-element topic="Technical-Documentation.md">
         <toc-element topic="WIP.md"/>
     </toc-element>
