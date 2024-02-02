@@ -1,0 +1,71 @@
+name: Build documentation
+
+on:
+  # Si spécifié, le workflow sera déclenché automatiquement lorsque vous poussez sur la branche `main`.
+  # Remplacez `main` par le nom de votre branche
+  push:
+    branches: ["main", "feat/writerside"]
+  # Spécifiez pour exécuter un workflow manuellement depuis l'onglet Actions sur GitHub
+  workflow_dispatch:
+
+# Donne au workflow les autorisations nécessaires pour cloner le dépôt et créer un déploiement de page
+permissions:
+  id-token: write
+  pages: write
+
+env:
+  # Nom du module et ID séparés par une barre oblique
+  INSTANCE: Writerside2/o
+  # Remplacez HI par l'ID de l'instance en majuscules
+  ARTIFACT: OutOfTheHole.zip
+  # Version de l'image Docker de Writerside
+  DOCKER_VERSION: 233.14272
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build Writerside docs using Docker
+        uses: JetBrains/writerside-github-action@v4
+        with:
+          instance: ${{ env.INSTANCE }}
+          artifact: ${{ env.ARTIFACT }}
+          docker-version: ${{ env.DOCKER_VERSION }}
+
+      - name: Upload documentation
+        uses: actions/upload-artifact@v3
+        with:
+          name: docs
+          path: |
+            artifacts/${{ env.ARTIFACT }}
+            artifacts/report.json
+          retention-days: 7
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # Nécessite les résultats du job de test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: docs
+
+      - name: Unzip artifact
+        run: unzip -O UTF-8 -qq ${{ env.ARTIFACT }} -d dir
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: dir
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
