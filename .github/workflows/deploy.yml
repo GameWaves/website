@@ -17,7 +17,7 @@ env:
   # Nom du module et ID séparés par une barre oblique
   INSTANCE: Writerside2/o
   # Remplacez HI par l'ID de l'instance en majuscules
-  ARTIFACT: OutOfTheHole.zip
+  ARTIFACT: webHelpO2-all.zip
   # Version de l'image Docker de Writerside
   DOCKER_VERSION: 233.14272
 
